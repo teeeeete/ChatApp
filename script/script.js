@@ -1,4 +1,4 @@
-$(function(){
+(function(){
 
     let localStream = null;
     let peer = null;
