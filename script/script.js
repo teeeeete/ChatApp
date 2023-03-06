@@ -1,145 +1,79 @@
-(function(){
+const Peer = window.Peer;
 
-    let localStream = null;
-    let peer = null;
-    let existingCall = null;
-    let audioSelect = $('#audioSource');
-    let videoSelect = $('#videoSource');
+(async function main() {
+    const localVideo = document.getElementById('js-local-video');
+    const localId = document.getElementById('js-local-id');
+    const videosContainer = document.getElementById('js-videos-container');
+    const roomId = document.getElementById('js-room-id');
+    const messages = document.getElementById('js-messages');
+    const joinTrigger = document.getElementById('js-join-trigger');
+    const leaveTrigger = document.getElementById('js-leave-trigger');
 
-    navigator.mediaDevices.enumerateDevices()
-        .then(function(deviceInfos) {
-            for (let i = 0; i !== deviceInfos.length; ++i) {
-                let deviceInfo = deviceInfos[i];
-                let option = $('<option>');
-                option.val(deviceInfo.deviceId);
-                if (deviceInfo.kind === 'audioinput') {
-                    option.text(deviceInfo.label);
-                    audioSelect.append(option);
-                } else if (deviceInfo.kind === 'videoinput') {
-                    option.text(deviceInfo.label);
-                    videoSelect.append(option);
-                }
-            }
-            videoSelect.on('change', setupGetUserMedia);
-            audioSelect.on('change', setupGetUserMedia);
-            setupGetUserMedia();
-        }).catch(function (error) {
-            console.error('mediaDevices.enumerateDevices() error:', error);
-            return;
-        });
+    const localStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+    });
+    localVideo.srcObject = localStream;
 
-    peer = new Peer({
+    const peer = new Peer({
         key: window.__SKYWAY_KEY__,
-        debug: 3
+        debug: 3,
     });
 
-    peer.on('open', function(){
-        $('#my-id').text(peer.id);
+    peer.on('open', (id) => {
+        localId.textContent = id;
     });
 
-    peer.on('error', function(err){
-        alert(err.message);
-    });
+    joinTrigger.addEventListener('click', () => {
+        const room = peer.joinRoom(roomId.value, {
+            mode: 'sfu',
+            stream: localStream,
+        });
 
-    $('#make-call').submit(function(e){
-        e.preventDefault();
-        let roomName = $('#join-room').val();
-        if (!roomName) {
-            return;
-        }
-        const　call = peer.joinRoom(roomName, {mode: 'sfu', stream: localStream});
-        setupCallEventHandlers(call);
-    });
+        room.on('open', () => {
+            messages.textContent += `===You joined===\n`;
+        });
 
-    $('#end-call').click(function(){
-        existingCall.close();
-    });
+        room.on('peerJoin', peerId => {
+            messages.textContent += `===${peerId} joined===\n`;
+        });
 
-    function setupGetUserMedia() {
-        let audioSource = $('#audioSource').val();
-        let videoSource = $('#videoSource').val();
-        let constraints = {
-            audio: {deviceId: {exact: audioSource}},
-            video: {deviceId: {exact: videoSource}}
-        };
-        constraints.video.width = {
-            min: 320,
-            max: 320
-        };
-        constraints.video.height = {
-            min: 240,
-            max: 240        
-        };
+        room.on('stream', async stream => {
+            const remoteVideo = document.createElement('video');
+            remoteVideo.srcObject = stream;
+            remoteVideo.playsInline = true;
+            remoteVideo.setAttribute('data-peer-id', stream.peerId);
+            videosContainer.append(remoteVideo);
 
-        if(localStream){
-            localStream = null;
-        }
+            await remoteVideo.play().catch(console.error);
+        });
 
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(function (stream) {
-                $('#myStream').get(0).srcObject = stream;
-                localStream = stream;
-
-                if(existingCall){
-                    existingCall.replaceStream(stream);
-                }
-
-            }).catch(function (error) {
-                console.error('mediaDevice.getUserMedia() error:', error);
-                return;
+        room.on('peerLeave', peerId => {
+            const remoteVideo = videosContainer.querySelector(`[data-peer-id="${peerId}"]`);
+            remoteVideo.srcObject.getTracks().forEach(track => {
+                track.stop();
             });
-    }
+            remoteVideo.srcObject = null;
+            remoteVideo.remove();
 
-    function setupCallEventHandlers(call){
-        if (existingCall) {
-            existingCall.close();
-        };
-
-        existingCall = call;
-        setupEndCallUI();
-        $('#room-id').text(call.name);
-
-        call.on('stream', function(stream){
-            addVideo(stream);
+            messages.textContent += `===${peerId} left===\n`;
         });
 
-        call.on('removeStream', function(stream){
-            removeVideo(stream.peerId);
+        room.once('close', () => {
+            messages.textContent += '===You left ===\n';
+            const remoteVideos = videosContainer.querySelectorAll('[data-peer-id]');
+            Array.from(remoteVideos)
+            .forEach(remoteVideo => {
+                remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+                remoteVideo.srcObject = null;
+                remoteVideo.remove();
+              });
         });
 
-        call.on('peerLeave', function(peerId){
-            removeVideo(peerId);
-        });
+        leaveTrigger.addEventListener('click', () => {
+            room.close();
+        }, { once: true });
+    });
 
-        call.on('close', function(){
-            removeAllRemoteVideos();
-            setupMakeCallUI();
-        });
-    }
-
-    function addVideo(stream){
-        const videoDom = $('<video autoplay>');
-        videoDom.attr('id',stream.peerId);
-        videoDom.get(0).srcObject = stream;
-        $('.videosContainer').append(videoDom);
-    }
-
-    function removeVideo(peerId){
-        $('#'+peerId).remove();
-    }
-
-    function removeAllRemoteVideos(){
-        $('.videosContainer').empty();
-    }
-
-    function setupMakeCallUI(){
-        $('#make-call').show();
-        $('#end-call').hide();
-    }
-
-    function setupEndCallUI() {
-        $('#make-call').hide();
-        $('#end-call').show();
-    }
-
-});
+    peer.on('error', console.error);
+})();

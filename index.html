@@ -4,31 +4,21 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
         <title>オンラインビデオ通話</title>
         <link rel="stylesheet" href="./style/style.css">
+    </head>
+    <body>
+        <div id="js-videos-container" class="videos-container">
+            <video id="js-local-video" autoplay muted="true"></video>
+        </div>
+        <div class="controller-container">
+            <p>Your id: <span id="js-local-id">...</span></p>
+            <input type="text" placeholder="Join room..." id="js-room-id">
+            <button id="js-join-trigger">Join</button>
+            <button id="js-leave-trigger">Leave</button>
+            <pre class="messages" id="js-messages"></pre>
+        </div>
+
         <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
         <script type="text/javascript" src="./script/key.js"></script>
         <script type="text/javascript" src="./script/script.js"></script>
-    </head>
-    <body>
-        <div class="videosContainer">
-            <video id="myStream" autoplay muted="true"></video>
-        </div>
-        
-        <div class="myControllerContainer">
-            <p>Your id: <span id="my-id">...</span></p>
-            <div class="select">
-                <label for="audioSource">Audio input source: </label><select id="audioSource"></select>
-            </div>
-            <div class="select">
-                <label for="videoSource">Video source: </label><select id="videoSource"></select>
-            </div>
-            <form id="make-call">
-                <input type="text" placeholder="Join room..." id="join-room">
-                <button type="submit">Join</button>
-            </form>
-            <div id="end-call">
-                <p>Currently in room <span id="room-id">...</span></p>
-                <button>Leave</button>
-            </div>
-        </div>
     </body>
 </html>
