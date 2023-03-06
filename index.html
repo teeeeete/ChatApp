@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head lang="ja">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+        <title>SkyWay Handson</title>
+        <link rel="stylesheet" href="./style/style.css">
+    </head>
+    <body>
+        <div id="js-videos-container" class="videos-container">
+            <video id="js-local-video" autoplay muted="true"></video>
+        </div>
+        <div class="controller-container">
+            <p>Your id: <span id="js-local-id">...</span></p>
+            <input type="text" placeholder="Join room..." id="js-room-id">
+            <button id="js-join-trigger">Join</button>
+            <button id="js-leave-trigger">Leave</button>
+            <pre class="messages" id="js-messages"></pre>
+        </div>
+
+        <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+        <script type="text/javascript" src="./script/key.js"></script>
+        <script type="text/javascript" src="./script/script.js"></script>
+    </body>
+</html>
