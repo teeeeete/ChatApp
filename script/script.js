@@ -29,7 +29,7 @@ $(function(){
         });
 
     peer = new Peer({
-        key: 'APIKEY',
+        key: window.__SKYWAY_KEY__,
         debug: 3
     });
 
