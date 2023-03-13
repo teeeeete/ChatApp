@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head lang="ja">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+        <title>ミーティング画面</title>
+        <link rel="stylesheet" href="./style/style.css">
+    </head>
+    <body>
+
+        <!-- タイトルエリア -->
+        <div class="title-container">
+            <!-- タイトル -->
+            <h1 class="title">meetingvideo</h1>
+            <!-- id表示 -->
+            <p id="room-id" class="room-id"></p>
+        </div>
+
+        <!-- ビデオエリア -->
+        <div id="videos-container" class="videos-container">
+            <video id="local-video" autoplay muted="true"></video>
+        </div>
+
+        <!-- 入室操作エリア -->
+        <div id="controller-container" class="controller-container">
+            <!-- ラベル -->
+            <p class="label-text">Room Name</p>
+            <!-- ルーム名入力 -->
+            <input id="room-name" class="room-name" type="text" placeholder="Room Name">
+            <!-- ユーザー名入力 -->
+            <input id="user-name" class="user-name" type="text" placeholder="Enter the your username">
+            <!-- 入室ボタン -->
+            <button id="join-room" class="join-room" type="submit">Join the room!</button>
+        </div>
+
+        <!-- 操作用ボタンエリア -->
+        <div id="meeting-container" class="meeting-container">
+            <!--マイクミュート-->
+            <div class="mic-mute">
+                <button id="mic-button" class="mic-button"></button>
+            </div>
+            <!--切断-->
+            <div class="modal-footer">
+                <button id="disconnect" class="disconnect-button"></button>
+            </div>
+            <!--カメラミュート-->
+            <div class="camera-mute">
+                <button id="camera-button" class="camera-button"></button>
+            </div>
+        </div>
+
+        <!-- チャットエリア -->
+        <div id="chat-container" class="chat-container">
+            <!-- メッセージログ -->
+            <pre id="message-log" class="message-log"></pre>
+            <!-- 入力領域 -->
+            <input id="message-input" class="message-input" type="text">
+            <!-- 送信ボタン -->
+            <button id="message-send" class="message-send"></button>
+        </div>
+
+        <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+        <script type="text/javascript" src="./script/key.js"></script>
+        <script type="text/javascript" src="./script/meeting.js"></script>
+
+    </body>
+</html>

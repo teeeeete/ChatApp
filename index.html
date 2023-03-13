@@ -2,23 +2,20 @@
 <html>
     <head lang="ja">
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-        <title>オンラインビデオ通話</title>
+        <title>ルーム作成画面</title>
         <link rel="stylesheet" href="./style/style.css">
     </head>
     <body>
-        <div id="js-videos-container" class="videos-container">
-            <video id="js-local-video" autoplay muted="true"></video>
+        <div class="create-room-area">
+            <p class="title-text">MeetingVideo</p>
+            <form class="pure-form">
+                <p class="description-text">Create your room</p>
+                <p class="label-text">https://teeeeete.github.io/ChatApp/meeting#</p>
+                <input id="make-room-name" class="make-room-name" type="text" placeholder="Enter the name of your room.">
+                <button id="make-room" class="make-room" type="submit">Create Room</button>
+            </form>
         </div>
-        <div class="controller-container">
-            <p>Your id: <span id="js-local-id">...</span></p>
-            <input type="text" placeholder="Join room..." id="js-room-id">
-            <button id="js-join-trigger">Join</button>
-            <button id="js-leave-trigger">Leave</button>
-            <pre class="messages" id="js-messages"></pre>
-        </div>
-
-        <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
-        <script type="text/javascript" src="./script/key.js"></script>
-        <script type="text/javascript" src="./script/script.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="./script/index.js"></script>
     </body>
 </html>
